@@ -1,11 +1,10 @@
-import { StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import { memo } from "react";
 import { useSelector } from "react-redux";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { FlashList } from "@shopify/flash-list";
 
 import TodoListItem from "./TodoListItem";
 import ListHeader from "./ListHeader";
@@ -17,7 +16,7 @@ const AllTodoList = () => {
 
   return (
     <View style={styles.container}>
-      <FlashList
+      <FlatList
         estimatedItemSize={200}
         data={categoryData}
         contentContainerStyle={{ paddingBottom: hp(10) }}
@@ -32,7 +31,7 @@ const AllTodoList = () => {
               {todoData.filter((item) => item.category == categoryItem) == 0 ? (
                 <NoTaskMessageOverlay />
               ) : (
-                <FlashList
+                <FlatList
                   contentContainerStyle={styles.contentContainerStyle}
                   data={todoData.filter(
                     (item) => item.category == categoryItem

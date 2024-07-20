@@ -9,7 +9,11 @@ import { useSelector } from "react-redux";
 import CategoryListItem from "./CategoryListItem";
 import AddCategoryButton from "./AddCategoryButton";
 
-const CategoryList = ({ activeCategory, onCategoryHandler }) => {
+const CategoryList = ({
+  activeCategory,
+  onCategoryHandler,
+  forCreateAndEdit,
+}) => {
   const categoryList = useSelector((state) => state.category);
 
   return (
@@ -17,18 +21,24 @@ const CategoryList = ({ activeCategory, onCategoryHandler }) => {
       <FlatList
         data={categoryList}
         keyExtractor={(_, index) => index.toString()}
-        renderItem={({ item, index }) => (
-          <CategoryListItem
-            onCategoryHandler={onCategoryHandler}
-            active={activeCategory === item}
-            category={item}
-            index={index}
-          />
-        )}
+        renderItem={({ item, index }) => {
+          if (forCreateAndEdit && item == "All") {
+            return;
+          }
+          return (
+            <CategoryListItem
+              onCategoryHandler={onCategoryHandler}
+              active={activeCategory === item}
+              category={item}
+              index={forCreateAndEdit?index-1:index}
+              forCreateAndEdit={forCreateAndEdit}
+            />
+          );
+        }}
         horizontal
         contentContainerStyle={styles.contentContainerStyle}
         showsHorizontalScrollIndicator={false}
-        ListFooterComponent={<AddCategoryButton />}
+        ListFooterComponent={!forCreateAndEdit && <AddCategoryButton />}
       />
     </View>
   );
@@ -41,5 +51,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(4),
     paddingVertical: hp(1),
     alignItems: "center",
+    borderWidth: 1,
   },
 });

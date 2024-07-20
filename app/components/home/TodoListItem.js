@@ -4,6 +4,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { formatDate } from "../../util/common";
 
 const TodoListItem = ({ item, index, activeCategoryStyles }) => {
   return (
@@ -21,7 +22,7 @@ const TodoListItem = ({ item, index, activeCategoryStyles }) => {
       ]}
     >
       <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.date}>{item.date}</Text>
+      <Text style={styles.date}>{formatDate(new Date(item.date))}</Text>
       <Text numberOfLines={5} style={styles.description}>
         {item.description}
       </Text>

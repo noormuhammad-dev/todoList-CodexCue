@@ -2,15 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const categorySlice = createSlice({
   name: "category",
-  initialState: [
-    "All",
-    "Work",
-    "Personal",
-    "Shopping",
-    "Fitness",
-    "Hobbies",
-    "Workout",
-  ],
+  initialState: ["All", "Work", "Personal", "Shopping", "Fitness", "Hobbies"],
   reducers: {},
 });
 
