@@ -1,14 +1,20 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { Ionicons } from "@expo/vector-icons";
 import { memo } from "react";
+import { useNavigation } from "@react-navigation/native";
 
 const AddCategoryButton = () => {
+  const navigation = useNavigation();
+
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => navigation.navigate("categoryScreen")}
+    >
       <Ionicons name="add" color={"#fff"} size={hp(2)} />
     </TouchableOpacity>
   );

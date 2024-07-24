@@ -4,6 +4,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import DeleteButton from "../addOrEdit/DeleteButton";
 
 const CategoryListItem = ({
   category,
@@ -11,6 +12,7 @@ const CategoryListItem = ({
   active,
   onCategoryHandler,
   forCreateAndEdit,
+  forCategoryScreen,
 }) => {
   return (
     <TouchableOpacity
@@ -20,8 +22,14 @@ const CategoryListItem = ({
         active && styles.activeContainer,
         forCreateAndEdit && { borderColor: "#000" },
         active && forCreateAndEdit && { borderColor: "#CFFF46" },
+        forCategoryScreen && {
+          marginLeft: 0,
+          marginVertical: hp(0.6),
+          marginRight: wp(2),
+        },
       ]}
-      onPress={() => onCategoryHandler(category)}
+      onPress={() => (forCategoryScreen ? {} : onCategoryHandler(category))}
+      activeOpacity={forCategoryScreen && 1}
     >
       <Text
         style={[
@@ -32,6 +40,9 @@ const CategoryListItem = ({
       >
         #{category}
       </Text>
+      {forCategoryScreen && category != "Work" && category != "Personal" && (
+        <DeleteButton isForCategory id={category} />
+      )}
     </TouchableOpacity>
   );
 };
@@ -45,6 +56,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(3),
     borderRadius: 8,
     paddingVertical: hp(0.5),
+    position: "relative",
   },
   text: {
     fontSize: hp(1.8),

@@ -13,6 +13,7 @@ const CategoryList = ({
   activeCategory,
   onCategoryHandler,
   forCreateAndEdit,
+  forCategoryScreen,
 }) => {
   const categoryList = useSelector((state) => state.category);
 
@@ -22,7 +23,7 @@ const CategoryList = ({
         data={categoryList}
         keyExtractor={(_, index) => index.toString()}
         renderItem={({ item, index }) => {
-          if (forCreateAndEdit && item == "All") {
+          if ((forCreateAndEdit || forCategoryScreen) && item == "All") {
             return;
           }
           return (
@@ -30,15 +31,23 @@ const CategoryList = ({
               onCategoryHandler={onCategoryHandler}
               active={activeCategory === item}
               category={item}
-              index={forCreateAndEdit?index-1:index}
+              index={forCreateAndEdit ? index - 1 : index}
               forCreateAndEdit={forCreateAndEdit}
+              forCategoryScreen={forCategoryScreen}
             />
           );
         }}
-        horizontal
-        contentContainerStyle={styles.contentContainerStyle}
+        horizontal={forCategoryScreen ? false : true}
+        contentContainerStyle={[
+          styles.contentContainerStyle,
+          (forCreateAndEdit || forCategoryScreen) && { paddingHorizontal: 0 },
+          forCategoryScreen && { alignItems: "flex-start" },
+        ]}
         showsHorizontalScrollIndicator={false}
-        ListFooterComponent={!forCreateAndEdit && <AddCategoryButton />}
+        ListFooterComponent={
+          !forCategoryScreen && !forCreateAndEdit && <AddCategoryButton />
+        }
+        numColumns={forCategoryScreen && 3}
       />
     </View>
   );
@@ -51,6 +60,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(4),
     paddingVertical: hp(1),
     alignItems: "center",
-    borderWidth: 1,
   },
 });

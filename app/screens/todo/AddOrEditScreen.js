@@ -1,5 +1,6 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import {
+  Alert,
   KeyboardAvoidingView,
   ScrollView,
   StyleSheet,
@@ -21,15 +22,18 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Screen from "./Screen";
 import ActionButton from "../../components/addOrEdit/ActionButton";
 import CategoryList from "../../components/home/CategoryList";
+import DeleteButton from "../../components/addOrEdit/DeleteButton";
 
-const AddOrEditScreen = ({ navigation }) => {
+const AddOrEditScreen = ({ navigation, route }) => {
   const dispatch = useDispatch();
+  const editableData = route.params?.editableData;
 
-  const titleRef = useRef("");
-  const descriptionRef = useRef("");
-  const [date, setDate] = useState(new Date());
-  const [selectedCategory, setSelectedCategory] = useState("");
-  console.log(selectedCategory)
+  const [data, setData] = useState({
+    title: editableData ? editableData.title : "",
+    description: editableData ? editableData.description : "",
+    date: editableData ? new Date(editableData.date) : new Date(),
+    selectedCategory: editableData ? editableData.category : "",
+  });
 
   const [datePickerVisible, setDatePickerVisible] = useState(false);
 
@@ -38,21 +42,61 @@ const AddOrEditScreen = ({ navigation }) => {
   }, []);
 
   const onConfirm = useCallback(() => {
-    dispatch(
-      todoAction.addTodo({
-        date: date.toISOString(),
-        title: titleRef.current,
-        description: descriptionRef.current,
-        category: selectedCategory,
-      })
-    );
+    if (
+      data.title.trim().length == 0 ||
+      data.description.trim().length == 0 ||
+      !data.selectedCategory
+    ) {
+      Alert.alert(
+        "Validation Error",
+        "Please provide a title, description, and select a category."
+      );
+      return;
+    }
+
+    if (editableData) {
+      dispatch(
+        todoAction.editTodo({
+          id: editableData.id,
+          data: {
+            date: data.date.toISOString(),
+            title: data.title.trim(),
+            description: data.description.trim(),
+            category: data.selectedCategory,
+          },
+        })
+      );
+    } else {
+      dispatch(
+        todoAction.addTodo({
+          date: data.date.toISOString(),
+          title: data.title.trim(),
+          description: data.description.trim(),
+          category: data.selectedCategory,
+        })
+      );
+    }
 
     navigation.goBack();
-  }, [titleRef.current, descriptionRef.current, date,selectedCategory]);
+  }, [data]);
 
   const onSelectCategory = useCallback((a) => {
-    setSelectedCategory(a);
+    setData((pre) => {
+      return {
+        ...pre,
+        selectedCategory: a,
+      };
+    });
   }, []);
+
+  const onInputTextChange = (name, txt) => {
+    setData((pre) => {
+      return {
+        ...pre,
+        [name]: txt,
+      };
+    });
+  };
 
   return (
     <Screen>
@@ -62,11 +106,12 @@ const AddOrEditScreen = ({ navigation }) => {
             <TextInput
               placeholder="Title"
               style={styles.titleInp}
-              onChangeText={(txt) => (titleRef.current = txt)}
+              value={data.title}
+              onChangeText={(txt) => onInputTextChange("title", txt)}
             />
 
             <View style={styles.dateContainer}>
-              <Text style={styles.date}>{formatDate(date)}</Text>
+              <Text style={styles.date}>{formatDate(data.date)}</Text>
               <TouchableOpacity
                 onPress={() => setDatePickerVisible(true)}
                 style={styles.calenderIcon}
@@ -79,11 +124,12 @@ const AddOrEditScreen = ({ navigation }) => {
               placeholder="Description"
               multiline
               style={styles.descriptionInp}
-              onChangeText={(txt) => (descriptionRef.current = txt)}
+              onChangeText={(txt) => onInputTextChange("description", txt)}
+              value={data.description}
             />
             <View>
               <CategoryList
-                activeCategory={selectedCategory}
+                activeCategory={data.selectedCategory}
                 onCategoryHandler={onSelectCategory}
                 forCreateAndEdit
               />
@@ -97,7 +143,7 @@ const AddOrEditScreen = ({ navigation }) => {
             </View>
             <View style={{ flex: 1.4 }}>
               <ActionButton onPress={onConfirm} bgColor={"#CFFF46"}>
-                Add
+                {editableData ? "Edit" : " Add"}
               </ActionButton>
             </View>
           </View>
@@ -108,12 +154,18 @@ const AddOrEditScreen = ({ navigation }) => {
         isVisible={datePickerVisible}
         mode="date"
         onConfirm={(a) => {
-          setDate(new Date(a));
+          setData((pre) => {
+            return {
+              ...pre,
+              date: new Date(a),
+            };
+          });
           setDatePickerVisible(false);
         }}
         onCancel={() => setDatePickerVisible(false)}
-        date={date}
+        date={data.date}
       />
+      {editableData && <DeleteButton id={editableData.id} />}
     </Screen>
   );
 };
