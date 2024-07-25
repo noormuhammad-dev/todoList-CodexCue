@@ -22,6 +22,9 @@ const todoSlice = createSlice({
     deleteTodo: (state, action) => {
       return state.filter((item) => item.id != action.payload);
     },
+    setTodo: (_, action) => {
+      return action.payload;
+    },
   },
 });
 

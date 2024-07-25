@@ -5,11 +5,14 @@ const categorySlice = createSlice({
   initialState: ["All", "Work", "Personal", "Shopping", "Fitness", "Hobbies"],
   reducers: {
     addCategory: (state, action) => {
-      return [ ...state,action.payload];
+      return [...state, action.payload];
     },
-    deleteCategory:(state,action)=>{
-      return state.filter(item=>item!=action.payload)
-    }
+    deleteCategory: (state, action) => {
+      return state.filter((item) => item != action.payload);
+    },
+    setCategory: (_, action) => {
+      return action.payload;
+    },
   },
 });
 

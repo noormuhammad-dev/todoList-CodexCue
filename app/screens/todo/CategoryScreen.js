@@ -3,9 +3,10 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { categoryActions } from "../../store/slice/categorySlice";
+import { debounce } from "lodash";
 
 import Screen from "./Screen";
 import ActionButton from "../../components/addOrEdit/ActionButton";
@@ -15,6 +16,7 @@ import BackButton from "../../components/ui/BackButton";
 const CategoryScreen = () => {
   const dispatch = useDispatch();
   const [category, setCategory] = useState("");
+  const categoryInpRef = useRef(null);
 
   const handleAddCategory = useCallback(() => {
     if (category.trim().length == 0) {
@@ -24,7 +26,15 @@ const CategoryScreen = () => {
 
     dispatch(categoryActions.addCategory(category.trim()));
     setCategory("");
+    categoryInpRef.current.clear();
   }, [category]);
+
+  const handleCategoryChange = useCallback(
+    debounce((txt) => {
+      setCategory(txt);
+    }, 400),
+    []
+  );
 
   return (
     <Screen>
@@ -32,10 +42,10 @@ const CategoryScreen = () => {
         <BackButton />
         <View style={styles.inputAndButtonContainer}>
           <TextInput
-            onChangeText={(txt) => setCategory(txt)}
+            onChangeText={(txt) => handleCategoryChange(txt)}
             style={styles.inp}
             placeholder="category"
-            value={category}
+            ref={categoryInpRef}
           />
           <View style={styles.btnContainer}>
             <ActionButton onPress={handleAddCategory} bgColor={"#CFFF46"}>
@@ -43,7 +53,7 @@ const CategoryScreen = () => {
             </ActionButton>
           </View>
         </View>
-        <CategoryList forCategoryScreen  />
+        <CategoryList forCategoryScreen />
       </View>
     </Screen>
   );
