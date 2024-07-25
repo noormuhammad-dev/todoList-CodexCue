@@ -16,8 +16,8 @@ const HomeScreen = () => {
   const dispatch = useDispatch();
 
   const [activeCategory, setActiveCategory] = useState("All");
-  const [isLoading, setIsLoading] = useState(false);
-  const [stopStoringDB, setStopStoringDB] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [stopStoringDB, setStopStoringDB] = useState(false);
 
   useEffect(() => {
     const getDataFromDB = async () => {
